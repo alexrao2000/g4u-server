@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    container_name: g4u
+    restart: always
+    environment:
+      POSTGRES_USER: g4u_user
+      POSTGRES_PASSWORD: g4u_password
+      POSTGRES_DB: g4u_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
