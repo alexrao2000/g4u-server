@@ -1,11 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+
+from src.database import Base, engine
+from src.routes.auth import router as auth_router
 
 import uuid
 
-from routes.auth import router as auth_router
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+  Base.metadata.create_all(bind=engine)
+  yield
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
   CORSMiddleware,
