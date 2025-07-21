@@ -5,5 +5,6 @@ class User(Base):
 
   __tablename__ = "users"
 
-  uuid = Column(Integer, primary_key=True, unique=True, index=True)
-  username = Column(Integer, unique=True, index=True)
+  uuid = Column(String, primary_key=True, unique=True, index=True)
+  email = Column(String, unique=True, index=True)
+  password = Column(String)
