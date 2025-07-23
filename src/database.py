@@ -5,7 +5,7 @@ from src.config import settings
 
 # print("Settings:", settings)
 
-engine = create_engine(settings.database_url, echo=True)
+engine = create_engine(settings.database_url, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
