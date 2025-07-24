@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -33,7 +34,7 @@ async def register(data: UserModel, db: Session=Depends(get_db)):
 
     # print("ID:", id, "Email:", data.email, "Password:", hashed_password)
 
-    return {"message": "Success!"}
+    return JSONResponse(status_code=200, content={"message": "Success!"})
   
   except:
-    return {"message": "Error: Failed to create user"}
+    raise HTTPException(status_code=400, detail="Failed to create user.")
