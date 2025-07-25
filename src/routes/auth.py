@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import ArgumentError, IntegrityError
 
 from src.models.user import User
 from src.database import get_db
@@ -16,7 +17,7 @@ class UserModel(BaseModel):
   password: str
 
 @router.post('/register')
-async def register(data: UserModel, db: Session=Depends(get_db)):
+def register(data: UserModel, db: Session=Depends(get_db)):
 
   try:
     id = str(uuid.uuid4())
@@ -38,9 +39,33 @@ async def register(data: UserModel, db: Session=Depends(get_db)):
 
     return response
   
-  except:
+  except IntegrityError:
 
+    db.rollback()
     exception = HTTPException(status_code=400, detail="Email already has an account associated with it.")
     #print(exception)
 
     raise exception
+  
+  except:
+
+    exception = HTTPException(status_code=400, detail="Error: Something went wrong.")
+
+    raise exception
+  
+@router.post('/login')
+def login(data: UserModel, db: Session=Depends(get_db)):
+  try:
+    user = db.query(User).filter(User.email == data.email).first()
+
+    if not user:
+      raise HTTPException(status_code=404, detail="User not found.")
+    
+    if not bcrypt.checkpw(data.password.encode(), user.password.encode()):
+      raise HTTPException(status_code=401, detail="Wrong password.")
+    
+    accessToken = str(uuid.uuid4())
+    
+    return JSONResponse({"message": "Success!", "accessToken": accessToken})
+  except ArgumentError:
+    raise HTTPException(status_code=500, detail="ArgumentError: Invalid or conflicting function argument")
