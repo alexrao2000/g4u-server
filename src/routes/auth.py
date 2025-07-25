@@ -32,9 +32,15 @@ async def register(data: UserModel, db: Session=Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    # print("ID:", id, "Email:", data.email, "Password:", hashed_password)
+    #print("ID:", id, "Email:", data.email, "Password:", hashed_password)
 
-    return JSONResponse(status_code=200, content={"message": "Success!"})
+    response = JSONResponse(status_code=200, content={"message": "Success!"})
+
+    return response
   
   except:
-    raise HTTPException(status_code=400, detail="Failed to create user.")
+
+    exception = HTTPException(status_code=400, detail="Email already has an account associated with it.")
+    #print(exception)
+
+    raise exception
