@@ -69,3 +69,6 @@ def login(data: UserModel, db: Session=Depends(get_db)):
     return JSONResponse({"message": "Success!", "accessToken": accessToken})
   except ArgumentError:
     raise HTTPException(status_code=500, detail="ArgumentError: Invalid or conflicting function argument")
+  
+  except:
+    raise HTTPException(status_code=400, detail="You messed up something else, not sure what it is.")
