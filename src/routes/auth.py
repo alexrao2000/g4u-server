@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from src.models.user import User
-from src.database import get_db, SessionLocal
+from src.database import get_db
 
 import uuid
 import bcrypt
