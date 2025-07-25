@@ -33,24 +33,19 @@ def register(data: UserModel, db: Session=Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    #print("ID:", id, "Email:", data.email, "Password:", hashed_password)
-
-    response = JSONResponse(status_code=200, content={"message": "Success!"})
-
+    accessToken = str(uuid.uuid4())
+    response = JSONResponse(status_code=200, content={"message": "Success!", "accessToken": accessToken})
     return response
   
   except IntegrityError:
 
     db.rollback()
     exception = HTTPException(status_code=400, detail="Email already has an account associated with it.")
-    #print(exception)
-
     raise exception
   
   except:
 
     exception = HTTPException(status_code=400, detail="Error: Something went wrong.")
-
     raise exception
   
 @router.post('/login')
@@ -64,9 +59,9 @@ def login(data: UserModel, db: Session=Depends(get_db)):
     if not bcrypt.checkpw(data.password.encode(), user.password.encode()):
       raise HTTPException(status_code=401, detail="Wrong password.")
     
-    accessToken = str(uuid.uuid4())
-    
+    accessToken = str(uuid.uuid4())    
     return JSONResponse({"message": "Success!", "accessToken": accessToken})
+  
   except ArgumentError:
     raise HTTPException(status_code=500, detail="ArgumentError: Invalid or conflicting function argument")
   
